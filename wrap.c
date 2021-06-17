@@ -6,7 +6,7 @@
 #include <sys/socket.h>
 #include <arpa/inet.h>
 #include <strings.h>
-//绑定错误显示和退出
+
 void perr_exit(const char *s)
 {
 	perror(s);
@@ -19,7 +19,7 @@ int Accept(int fd, struct sockaddr *sa, socklen_t *salenptr)
 
 again:
 	if ((n = accept(fd, sa, salenptr)) < 0) {
-		if ((errno == ECONNABORTED) || (errno == EINTR))//ECONNABORTED 代表连接失败 ETINTR 代表被信号打断
+		if ((errno == ECONNABORTED) || (errno == EINTR))
 			goto again;
 		else
 			perr_exit("accept error");
@@ -73,7 +73,7 @@ ssize_t Read(int fd, void *ptr, size_t nbytes)
 
 again:
 	if ( (n = read(fd, ptr, nbytes)) == -1) {
-		if (errno == EINTR)//被信号打断应该继续读
+		if (errno == EINTR)
 			goto again;
 		else
 			return -1;
@@ -104,11 +104,10 @@ int Close(int fd)
     return n;
 }
 
-/*参三: 应该读取的字节数*/
 ssize_t Readn(int fd, void *vptr, size_t n)
 {
-	size_t  nleft;              //usigned int 剩余未读取的字节数
-	ssize_t nread;              //int 实际读到的字节数
+	size_t  nleft;              
+	ssize_t nread;              
 	char   *ptr;
 
 	ptr = vptr;
@@ -123,8 +122,8 @@ ssize_t Readn(int fd, void *vptr, size_t n)
 		} else if (nread == 0)
 			break;
 
-		nleft -= nread;//防止一次数据没有读完
-		ptr += nread;//指针需要向后移动
+		nleft -= nread;
+		ptr += nread;
 	}
 	return n - nleft;
 }
@@ -155,11 +154,10 @@ static ssize_t my_read(int fd, char *ptr)
 {
 	static int read_cnt;
 	static char *read_ptr;
-	static char read_buf[100];//定义了100的缓冲区
+	static char read_buf[100];
 
 	if (read_cnt <= 0) {
 again:
-        //使用缓冲区可以避免多次从底层缓冲读取数据--为了提高效率
 		if ( (read_cnt = read(fd, read_buf, sizeof(read_buf))) < 0) {
 			if (errno == EINTR)
 				goto again;
@@ -169,11 +167,10 @@ again:
 		read_ptr = read_buf;
 	}
 	read_cnt--;
-	*ptr = *read_ptr++;//从缓冲区取数据
+	*ptr = *read_ptr++;
 
 	return 1;
 }
-//读取一行
 ssize_t Readline(int fd, void *vptr, size_t maxlen)
 {
 	ssize_t n, rc;
@@ -183,9 +180,9 @@ ssize_t Readline(int fd, void *vptr, size_t maxlen)
 	for (n = 1; n < maxlen; n++) {
 		if ( (rc = my_read(fd, &c)) == 1) {
 			*ptr++ = c;
-			if (c  == '\n')//代表任务完成
+			if (c  == '\n')
 				break;
-		} else if (rc == 0) {//对端关闭
+		} else if (rc == 0) {
 			*ptr = 0;//0 = '\0'
 			return n - 1;
 		} else
@@ -200,13 +197,12 @@ int tcp4bind(short port,const char *IP)
 {
     struct sockaddr_in serv_addr;
     int lfd = Socket(AF_INET,SOCK_STREAM,0);
-    bzero(&serv_addr,sizeof(serv_addr));//清空serv_addr地址 对比 memset()
+    bzero(&serv_addr,sizeof(serv_addr));
     if(IP == NULL){
-        //如果这样使用 0.0.0.0,任意ip将可以连接
         serv_addr.sin_addr.s_addr = INADDR_ANY;
     }else{
         if(inet_pton(AF_INET,IP,&serv_addr.sin_addr.s_addr) <= 0){
-            perror(IP);//转换失败
+            perror(IP);
             exit(1);
         }
     }
