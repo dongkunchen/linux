@@ -1,4 +1,3 @@
-//使用mmap函數完成父子進程間通信
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
@@ -11,7 +10,6 @@
 
 int main()
 {
-    //打開文件
     int fd = open("./test.log", O_RDWR);
     if(fd<0)
     {
@@ -20,14 +18,12 @@ int main()
     }
     int len = lseek(fd, 0, SEEK_END);
 
-    //使用mmap函數建立共享映射區
     void * addr = mmap(NULL, len, PROT_READ | PROT_WRITE, MAP_SHARED, fd, 0);
     if(addr==MAP_FAILED)
     {
         perror("mmap error");
         return -1;
     }
-    //創建子進程
     pid_t pid = fork();
     if(pid<0)
     {
