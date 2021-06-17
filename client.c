@@ -1,4 +1,4 @@
-//客戶端程序
+
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
@@ -10,7 +10,7 @@
 
 int main()
 {
-    //創建socket---返回的文件描述服用於和服務端通信
+    
     int cfd = socket(AF_INET, SOCK_STREAM, 0);
     if(cfd<0)
     {
@@ -18,7 +18,7 @@ int main()
         return -1;
     }
     
-    //連接服務端
+    
     struct sockaddr_in serv;
     serv.sin_family = AF_INET;
     serv.sin_port = htons(8888);
@@ -35,13 +35,12 @@ int main()
     char buf[256];
     while(1)
     {
-        //讀標準輸入數據
+       
         memset(buf, 0x00, sizeof(buf));
         n = read(STDIN_FILENO, buf, sizeof(buf));
-        //發送數據
+        
         write(cfd, buf, n);
-
-        //讀服務端發送來的數據
+ 
         memset(buf, 0x00, sizeof(buf));
         n = read(cfd, buf, sizeof(buf));
         if(n<=0)
@@ -52,7 +51,7 @@ int main()
         printf("n==[%d], buf==[%s]\n", n, buf);
     }
 
-    //關閉套接字cfd
+    
     close(cfd);
 
     return 0;
