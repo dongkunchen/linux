@@ -1,5 +1,3 @@
-//父進程使用SIGCHLD信號完成對子進程的回收
-//解決所有子進程先死掉後出現的三個殭屍進程
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
@@ -37,7 +35,6 @@ int main(int argc, char *argv[])
 	pid_t pid;
 	int i = 0;
 
-	//將SIGCHLD阻塞
 	sigset_t mask;
 	sigemptyset(&mask);
 	sigaddset(&mask, SIGCHLD);
@@ -62,25 +59,25 @@ int main(int argc, char *argv[])
 		}
 	}
 
-	if (i == 0) //第一個子進程
+	if (i == 0) 
 	{
 		printf("[%d]---[%d]: child\n", i, getpid());
 		// sleep(1);
 	}
 
-	if (i == 1) //第二個子進程
+	if (i == 1) 
 	{
 		printf("[%d]---[%d]: child\n", i, getpid());
 		// sleep(1);
 	}
 
-	if (i == 2) //第三個子進程
+	if (i == 2) 
 	{
 		printf("[%d]---[%d]: child\n", i, getpid());
 		// sleep(3)
 	}
 
-	if (i == 3) //父進程
+	if (i == 3) 
 	{
 		printf("[%d]---[%d]: parent\n", i, getpid());
 		struct sigaction act;
@@ -90,7 +87,6 @@ int main(int argc, char *argv[])
 		sleep(5);
 		sigaction(SIGCHLD, &act, NULL);
 
-		//完成SIGCHLD信號
 		sigprocmask(SIG_UNBLOCK, &mask, NULL);
 
 		while (1)
