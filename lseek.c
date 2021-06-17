@@ -8,7 +8,6 @@
 
 int main(int argc, char *argv[])
 {
-	//打開文件
 	int fd = open(argv[1], O_RDWR | O_CREAT, 0777);
 	if(fd<0)
 	{
