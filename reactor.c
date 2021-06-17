@@ -1,4 +1,3 @@
-//反應堆簡單版
 #include <stdio.h>
 #include <stdlib.h>
 #include <unistd.h>
@@ -14,10 +13,8 @@
 #define _BUF_LEN_ 1024
 #define _EVENT_SIZE_ 1024
 
-//全局epoll樹的根
 int gepfd = 0;
 
-//事件驅動結構體
 typedef struct xx_event
 {
     int fd;
@@ -33,7 +30,6 @@ xevent myevents[_EVENT_SIZE_ + 1];
 
 void readData(int fd, int events, void *arg);
 
-//添加事件
 void eventadd(int fd, int events, void (*call_back)(int, int, void *), void *arg, xevent *ev)
 {
     ev->fd = fd;
@@ -46,7 +42,6 @@ void eventadd(int fd, int events, void (*call_back)(int, int, void *), void *arg
     epoll_ctl(gepfd, EPOLL_CTL_ADD, fd, &epv);
 }
 
-//修改事件
 void eventset(int fd, int events, void (*call_back)(int, int, void *), void *arg, xevent *ev)
 {
     ev->fd = fd;
@@ -59,7 +54,6 @@ void eventset(int fd, int events, void (*call_back)(int, int, void *), void *arg
     epoll_ctl(gepfd, EPOLL_CTL_MOD, fd, &epv);
 }
 
-//刪除事件
 void eventdel(xevent *ev, int fd, int events)
 {
     printf("begin call %s\n", __FUNCTION__);
@@ -76,7 +70,6 @@ void eventdel(xevent *ev, int fd, int events)
     epoll_ctl(gepfd, EPOLL_CTL_DEL, fd, &epv);
 }
 
-//發送數據
 void senddata(int fd, int events, void *arg)
 {
     printf("begin call %s\n", __FUNCTION__);
@@ -86,25 +79,23 @@ void senddata(int fd, int events, void *arg)
     eventset(fd, EPOLLIN, readData, arg, ev);
 }
 
-//讀數據
 void readData(int fd, int events, void *arg)
 {
     printf("begin call %s\n", __FUNCTION__);
     xevent *ev = arg;
 
     ev->buflen = Read(fd, ev->buf, sizeof(ev->buf));
-    if (ev->buflen > 0) //獨到數據
+    if (ev->buflen > 0) 
     {
         eventset(fd, EPOLLOUT, senddata, arg, ev);
     }
-    else if (ev->buflen == 0) //對方關閉連接
+    else if (ev->buflen == 0) 
     {
         Close(fd);
         eventdel(ev, fd, EPOLLIN);
     }
 }
 
-//新連接處理
 void initAccept(int fd, int events, void *arg)
 {
     printf("begin call %s.getfd =%d\n", __FUNCTION__, gepfd);
@@ -121,7 +112,6 @@ void initAccept(int fd, int events, void *arg)
             break;
         }
     }
-    //設置讀事件
     eventadd(cfd, EPOLLIN, readData, &myevents[i], &myevents[i]);
 }
 
@@ -129,11 +119,9 @@ int main(int argc, char *argv[])
 {
     int lfd = Socket(AF_INET, SOCK_STREAM, 0);
 
-    //設置端口複用 不用等待一分鐘就能在連
     int opt = 1;
     setsockopt(lfd, SOL_SOCKET, SO_REUSEADDR, &opt, sizeof(int));
 
-    //綁定
     struct sockaddr_in serv;
     bzero(&serv, sizeof(serv));
     serv.sin_family = AF_INET;
@@ -141,16 +129,13 @@ int main(int argc, char *argv[])
     serv.sin_addr.s_addr = htonl(INADDR_ANY);
     Bind(lfd, (struct sockaddr *)&serv, sizeof(serv));
 
-    //設置監聽
     Listen(lfd, 128);
 
-    //創建epoll樹根節點
     gepfd = epoll_create(1024);
     printf("gepfd === %d\n", gepfd);
 
     struct epoll_event events[1024];
 
-    //添加最初始事件,將監聽文件描述符上樹
     eventadd(lfd, EPOLLIN, initAccept, &myevents[_EVENT_SIZE_], &myevents[_EVENT_SIZE_]);
 
     while (1)
