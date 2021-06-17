@@ -4,7 +4,6 @@
 #include <sys/types.h>
 #include <unistd.h>
 
-//驗證是否共享全局
 int g_var = 99;
 int main()
 {
@@ -18,14 +17,14 @@ int main()
 	{
 		printf("father: pid==[%d], fpid==[%d]\n", getpid(), getppid());
 		g_var++;
-		printf("[%p]",&g_var);//地址相同
+		printf("[%p]",&g_var);
 	}
 	else if(pid==0)
 	{
 		sleep(1);
-		printf("[%p]",&g_var);//地址相同
+		printf("[%p]",&g_var);
 		printf("child: pid==[%d], fpid==[%d]\n", getpid(), getppid());
-		printf("child: g_var==[%d]\n", g_var);//父子進程不能共享全局變量
+		printf("child: g_var==[%d]\n", g_var);
 	}
 	return 0;
 }		
