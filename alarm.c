@@ -1,4 +1,3 @@
-//alarm函數測試
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
@@ -15,7 +14,7 @@ int main()
 {
     signal(SIGALRM, sighandler);
 
-    //設置時鐘
+
     int n = alarm(5);
     printf("n==[%d]\n", n);
 
