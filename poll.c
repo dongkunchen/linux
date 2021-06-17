@@ -1,4 +1,3 @@
-//多路IO復用-poll
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
@@ -24,14 +23,11 @@ int main()
     int sockfd;
     fd_set tmpfds, readfds;
     struct sockaddr_in serv, cliaddr;
-    //創建socket
     int lfd = Socket(AF_INET, SOCK_STREAM, 0);
 
-    //設置端口複用 不用等待一分鐘就能在連
     int opt = 1;
     setsockopt(lfd, SOL_SOCKET, SO_REUSEADDR, &opt, sizeof(int));
 
-    //綁定
     bzero(&serv, sizeof(serv));
     serv.sin_family = AF_INET;
     serv.sin_port = htons(8888);
@@ -39,7 +35,6 @@ int main()
     // ret = Bind(lfd, (struct sockaddr *)&serv, sizeof(serv));
     Bind(lfd, (struct sockaddr *)&serv, sizeof(serv));
 
-    //設置監聽
     Listen(lfd, 128);
 
     struct pollfd client[1024];
@@ -49,7 +44,6 @@ int main()
         client[i].fd = -1;
     }
 
-    //將監聽文件描述符委託給內和
     client[0].fd = lfd;
     client[0].events = POLLIN;
 
@@ -68,12 +62,10 @@ int main()
             exit(1);
         }
 
-        //有客戶端連接請求
         if (client[0].revents & POLLIN)
         {
             cfd = Accept(lfd, NULL, NULL);
 
-            //尋找client數組中可用位置
             for (i = 1; i < 1024; i++)
             {
                 if (client[i].fd == -1)
@@ -84,7 +76,6 @@ int main()
                 }
             }
 
-            //若沒有位置,則關閉連接
             if (i == 1024)
             {
                 Close(cfd);
@@ -96,14 +87,12 @@ int main()
                 maxi = i;
             }
 
-            //nready發生變化文件描述符個數
             if (--nready == 0)
             {
                 continue;
             }
         }
 
-        //有數據到來的情況
         for (i = 0; i <= maxi; i++)
         {
             if (client[i].fd == -1)
