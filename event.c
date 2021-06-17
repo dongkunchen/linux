@@ -6,7 +6,6 @@
 int main()
 {
     int i = 0;
-    //獲取當前系統支持的方法
     const char **p = event_get_supported_methods();
     while (p[i]!=NULL)
     {
@@ -14,7 +13,6 @@ int main()
     }
     printf("\n");
 
-    //獲取地基節點
     struct event_base *base = event_base_new();
     if(base==NULL)
     {
@@ -22,11 +20,9 @@ int main()
         return -1;
     }
      
-    //獲取當前系統使用的方法
     const char *pp = event_base_get_method(base);
     printf("%s\n", pp);
 
-    //釋放地基節點
     event_base_free(base);
     
 
