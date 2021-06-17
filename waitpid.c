@@ -16,28 +16,24 @@ int main()
 	else if (pid > 0)
 	{
 		printf("father: [%d], pid==[%d], fpid==[%d]\n", pid, getpid(), getppid());
-		//pid_t wpid = wait(NULL);
 		int wstatus;
-		//pid_t wpid = waitpid(pid,&wstatus,0);//跟wait
-		//WNOHANG表示不阻塞
 		while (1)
 		{
-			pid_t wpid = waitpid(-1, &wstatus, WNOHANG); //跟wait差別
-			// printf("wpid==[%d\n]", wpid);
+			pid_t wpid = waitpid(-1, &wstatus, WNOHANG); 
 			if (wpid > 0)
 			{
-				if (WIFEXITED(wstatus)) //正常退出
+				if (WIFEXITED(wstatus)) 
 				{
 					printf("chile normal exit, status==[%d]\n", WEXITSTATUS(wstatus));
 				}
-				else if (WIFSIGNALED(wstatus)) //被信號殺死
+				else if (WIFSIGNALED(wstatus))
 				{
 					printf("child killed by singnal, signo==[%d]\n", WTERMSIG(wstatus));
 				}
 			}
-			else if(wpid==0)//子進程還活著
+			else if(wpid==0)
 			{
-				//printf("chlid is living,wpid==[%d]\n", wpid);
+				printf("chlid is living,wpid==[%d]\n", wpid);
 			}
 			else if(wpid==-1)
 			{
