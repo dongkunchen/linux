@@ -1,4 +1,3 @@
-//event建立簡單服務端
 #include <stdio.h>
 #include <stdlib.h>
 #include <sys/socket.h>
@@ -30,7 +29,6 @@ void init_ev_fd()
 void setEventFd(evutil_socket_t fd, struct event *ev)
 {
     int i = 0;
-    //查找存放的位置
     for (i = 0; i < MAX; i++)
     {
         if (event[i].fd == -1)
@@ -38,7 +36,6 @@ void setEventFd(evutil_socket_t fd, struct event *ev)
             break;
         }
     }
-    //若找不到合適的位置,直接退出進程
     if (i == MAX)
     {
         exit(1);
@@ -105,7 +102,6 @@ void conncb(evutil_socket_t fd, short events, void *arg)
 {
     struct event_base *base = (struct event_base *)arg;
 
-    //接受新的客戶端連接
     struct sockaddr_in cliaddr;
     socklen_t addrlen = sizeof(struct sockaddr_in);
 
@@ -143,7 +139,6 @@ int main()
 
     listen(lfd, 120);
 
-    //創建地基
     struct event_base *base = event_base_new();
     if (base == NULL)
     {
@@ -151,20 +146,16 @@ int main()
         return -1;
     }
 
-    //創建監聽文件描述符對應事件
     struct event *ev = event_new(base, lfd, EV_READ | EV_PERSIST, conncb, base);
     if (ev == NULL)
     {
         printf("event_new error\n");
     }
 
-    //將新的事件節點上base地基
     event_add(ev, NULL);
 
-    //進入事件循環等待
     event_base_dispatch(base);
 
-    //釋放資源
     event_base_free(base);
     event_free(ev);
 
