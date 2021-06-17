@@ -20,9 +20,6 @@ int main()
 	else if(pid==0)
 	{
 		printf("child: pid==[%d], fpid==[%d]\n", getpid(), getppid());
-		// execl("/bin/ls","ls","-l",NULL);
-		// execl("./test","test","hello","world","ni","hao",NULL);
-		// execlp("ls","ls","-l",NULL);//execlp不帶路徑使用環境變量
 		execlp("./test","test","hello","world","ni","hao",NULL);
 		perror("execl error");
 	}
