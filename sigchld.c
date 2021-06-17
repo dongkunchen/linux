@@ -1,4 +1,3 @@
-//驗證SIGCHLD信號如何產生
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
