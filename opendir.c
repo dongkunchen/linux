@@ -24,16 +24,16 @@ int main (int argc, char *argv[])
 		switch(pDent->d_type)
 		{
 			case DT_REG:
-				printf("普通文件");
+				printf("Normal file");
 				break;
 			case DT_DIR:
-				printf("目錄文件");
+				printf("Folder file");
 				break;
 			case DT_LNK:
-				printf("鏈接文件");
+				printf("Link file");
 				break;
 			default:
-				printf("未知文件");
+				printf("Unknown file");
 		}
 		printf("\n");
 	}
