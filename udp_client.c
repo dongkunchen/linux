@@ -1,4 +1,3 @@
-//udp客戶端
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
@@ -10,7 +9,6 @@
 
 int main()
 {
-    //創建socket
     int cfd = socket(AF_INET, SOCK_DGRAM, 0);
     if(cfd<0)
     {
@@ -27,20 +25,16 @@ int main()
 
     while (1)
     {
-        //讀標準輸入數據
         memset(buf, 0x00, sizeof(buf));
         n = read(STDIN_FILENO, buf, sizeof(buf));
 
-        //發送數據
         sendto(cfd, buf, n, 0, (struct sockaddr *)&serv, sizeof(serv));
 
-        //讀取數據
         memset(buf, 0x00, sizeof(buf));
         n = recvfrom(cfd, buf, sizeof(buf), 0, NULL, NULL);
         printf("n==[%d], buf==[%s]\n", n, buf);
     }
 
-    //關閉套接字
     close(cfd);
 
     return 0;
