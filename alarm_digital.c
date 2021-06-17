@@ -1,4 +1,3 @@
-//測試1秒數多少數字
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
