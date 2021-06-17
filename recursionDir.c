@@ -33,24 +33,24 @@ int checkdir(char *path)
 			continue;
 		}
 
-		printf("文件名:[%s/%s]-->", path, p->d_name);
+		printf("File Name:[%s/%s]-->", path, p->d_name);
 		switch (p->d_type)
 		{
 		case DT_DIR:
-			printf("目錄文件\n");
+			printf("Folder file\n");
 			memset(sFullPath, 0x00, sizeof(sFullPath));
 			sprintf(sFullPath, "%s/%s", path, p->d_name);
 			n += checkdir(sFullPath);
 			break;
 		case DT_REG:
-			printf("普通文件\n");
+			printf("Normal file\n");
 			n++;
 			break;
 		case DT_LNK:
-			printf("鏈接文件\n");
+			printf("Link file\n");
 			break;
 		default:
-			printf("未知文件\n");
+			printf("Unknown file\n");
 		}
 
 		closedir(pDir);
