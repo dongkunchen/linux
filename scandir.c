@@ -7,7 +7,6 @@ int main(int argc, char *argv[])
     int n;
 
     n = scandir(argv[1], &namelist, NULL, alphasort);
-    // n = scandir(argv[1], &namelist, NULL, alphasort);//代替執行./scandir .(.代表傳入文件夾名)
     if (n < 0)
     {
         perror("scandir");
