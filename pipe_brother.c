@@ -8,7 +8,6 @@
 
 int main()
 {
-    //創建管道int pipe(int pipefd[2]);
     int fd[2];
     int ret = pipe(fd);
     pid_t pid;
@@ -18,7 +17,6 @@ int main()
         return -1;
     }
 
-    //創建子進程
     int i = 0;
     int n = 2;
     for (i = 0; i < n; i++)
@@ -43,7 +41,7 @@ int main()
         int wstatus;
         while (1)
         {
-            if (wpid == 0) //子進程還活著
+            if (wpid == 0) 
             {
                 sleep(1);
                 continue;
@@ -55,11 +53,11 @@ int main()
             }
             else if (wpid > 0)
             {
-                if (WIFEXITED(wstatus)) //正常退出
+                if (WIFEXITED(wstatus)) 
                 {
                     printf("chile normal exit, status==[%d]\n", WEXITSTATUS(wstatus));
                 }
-                else if (WIFSIGNALED(wstatus)) //被信號殺死
+                else if (WIFSIGNALED(wstatus)) 
                 {
                     printf("child killed by singnal, signo==[%d]\n", WTERMSIG(wstatus));
                 }
@@ -67,13 +65,12 @@ int main()
         }
     }
     
-    //第一個子進程
+    
    
-	if (i == 0) //第一個子進程
+	if (i == 0) 
 	{
 		close(fd[0]);
 
-        //將標準輸出重定向到管道寫端
         dup2(fd[1], STDOUT_FILENO);
         execlp("ps", "ps", "aux", NULL);
         perror("execlp error");
@@ -81,12 +78,11 @@ int main()
         close(fd[1]);
 	}
 
-	if (i == 1) //第二個子進程
+	if (i == 1) 
 	{
 		printf("child: fpid==[%d], cpid==[%d]\n", getppid(), getpid());
         close(fd[1]);
 
-        //將標準輸出重定向到管道讀端
         dup2(fd[0], STDIN_FILENO);
         execlp("grep", "grep", "--color","bash", NULL);
         perror("execlp error");
