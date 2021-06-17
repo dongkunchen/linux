@@ -1,4 +1,3 @@
-//服務端程序
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
@@ -10,7 +9,6 @@
 
 int main()
 {
-    //創建socket---返回的文件描述服用於監聽
     int lfd = socket(AF_INET, SOCK_STREAM, 0);
     if(lfd<0)
     {
@@ -18,12 +16,11 @@ int main()
         return -1;
     }
 
-    //綁定bind
     struct sockaddr_in serv;
     bzero(&serv, sizeof(serv));
     serv.sin_family = AF_INET;
     serv.sin_port = htons(8888);
-    serv.sin_addr.s_addr = htonl(INADDR_ANY);//表示使用本基任意可用IP
+    serv.sin_addr.s_addr = htonl(INADDR_ANY);
     int ret = bind(lfd, (struct sockaddr *)&serv, sizeof(serv));
     if(ret<0)
     {
@@ -31,10 +28,8 @@ int main()
         return -1;
     }
 
-    //監聽
     listen(lfd, 128);
 
-    //接收鏈接
     int cfd = accept(lfd, NULL, NULL);
     printf("lfd==[%d], cfd==[%d]\n", lfd, cfd);
 
@@ -44,7 +39,6 @@ int main()
 
     while(1)
     {
-        //讀數據
         memset(buf , 0x00, sizeof(buf));
         n = read(cfd, buf, sizeof(buf));
         if(n<=0)
@@ -58,11 +52,9 @@ int main()
             buf[i] = toupper(buf[i]);
         }
 
-        //發送數據
         write(cfd, buf, n);        
     }
 
-    //關閉監聽文件描述符和通信文件描述符
     close(lfd);
     close(cfd);
 
