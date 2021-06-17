@@ -29,7 +29,7 @@ int main(int argc, char *argv[])
 		write(fd, "hello world",strlen("hello world"));
         close(fd);
 	}
-	else if(pid==0)//子進程
+	else if(pid==0)
 	{
 		printf("child: fpid==[%d], cpid==[%d]\n", getppid(), getpid());
         char buf[255];
