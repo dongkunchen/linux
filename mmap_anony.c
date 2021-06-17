@@ -1,4 +1,3 @@
-//使用mmap函數匿名映射完成父子進程間通信
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
@@ -11,14 +10,12 @@
 
 int main()
 {
-    //使用mmap函數建立共享映射區
     void * addr = mmap(NULL, 4096, PROT_READ | PROT_WRITE, MAP_SHARED | MAP_ANONYMOUS, -1, 0);
     if(addr==MAP_FAILED)
     {
         perror("mmap error");
         return -1;
     }
-    //創建子進程
     pid_t pid = fork();
     if(pid<0)
     {
