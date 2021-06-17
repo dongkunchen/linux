@@ -12,15 +12,15 @@ int main(int argc, char *argv[])
 	stat(argv[1], &sb);
 	if((sb.st_mode & S_IFMT) == S_IFREG)
 	{
-		printf("普通文件\n");
+		printf("Normal file\n");
 	}
 	else if((sb.st_mode & S_IFMT) == S_IFDIR)
 	{
-		printf("目錄文件\n");
+		printf("Folder file\n");
 	}
 	else if((sb.st_mode & S_IFMT) == S_IFLNK)
 	{
-		printf("連接文件\n");	
+		printf("L\n");	
 	}
 
 	return 0;
