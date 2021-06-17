@@ -8,7 +8,6 @@
 
 int main()
 {
-    //創建管道int pipe(int pipefd[2]);
     int fd[2];
     int ret = pipe(fd);
     if (ret < 0)
@@ -19,10 +18,8 @@ int main()
     
     write(fd[1], "hello world", strlen("hello world"));
 
-    //關閉寫端
     close(fd[1]);
 
-    //設置管道讀端非阻塞
     int flag = fcntl(fd[0], F_GETFL);
     flag |= O_NONBLOCK;
     fcntl(fd[0], F_SETFL, flag);
