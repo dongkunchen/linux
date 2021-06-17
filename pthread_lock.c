@@ -1,4 +1,3 @@
-//線程同步-互斥鎖
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
@@ -10,7 +9,6 @@
 
 int number = 0;
 
-//定義一把互斥鎖
 pthread_mutex_t mutex;
 
 void *mythread1(void *arg)
@@ -19,7 +17,6 @@ void *mythread1(void *arg)
     int n;
     for (i = 0; i < NUM; i++)
     {
-        //加鎖
         pthread_mutex_lock(&mutex);
         n = number;
         n++;
@@ -46,10 +43,8 @@ void *mythread2(void *arg)
 
 int main()
 {
-    //互斥鎖初始化要在主線程內
     pthread_mutex_init(&mutex, NULL);
 
-    //創建子線程
     pthread_t thread1;
     int ret = pthread_create(&thread1, NULL, mythread1, NULL);
     if (ret != 0)
@@ -69,7 +64,6 @@ int main()
     pthread_join(thread1, NULL);
     pthread_join(thread2, NULL);
 
-    //釋放互斥鎖
     pthread_mutex_destroy(&mutex);
 
     printf("number==[%d]\n",number);
