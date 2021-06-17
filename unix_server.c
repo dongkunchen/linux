@@ -1,4 +1,3 @@
-//本地socket服務端
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
@@ -11,7 +10,6 @@
 
 int main()
 {
-    //創建socket
     int lfd = socket(AF_UNIX, SOCK_STREAM, 0);
     if (lfd<0)
     {
@@ -19,9 +17,7 @@ int main()
         return -1;
     }
 
-    //刪除serv.sock文件不然有這文件bind會抱錯
     unlink("serv.sock");
-    //綁定
     struct sockaddr_un serv;
     serv.sun_family = AF_UNIX;
     strcpy(serv.sun_path, "./serv.sock");
@@ -32,10 +28,8 @@ int main()
         return -1;
     }
 
-    //監聽
     listen(lfd, 128);
 
-    //接收新的客戶端連接
     struct sockaddr_un client;
     socklen_t len = sizeof(client);
     int cfd = accept(lfd, (struct sockaddr *)&client, &len);
@@ -51,7 +45,6 @@ int main()
     char buf[1024];
     while (1)
     {
-        //讀數據
         memset(buf, 0x00, sizeof(buf));
         int n = read(cfd, buf, sizeof(buf));
         if (n<=0)
@@ -66,7 +59,6 @@ int main()
             buf[i] = toupper(buf[i]);
         }
         
-        //發送數據
         write(cfd, buf, n);
     }
     
