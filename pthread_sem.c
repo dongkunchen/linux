@@ -1,4 +1,3 @@
-//使用信號量實現生產者和消費者模型
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
@@ -15,18 +14,15 @@ typedef struct node
 
 NODE *head = NULL;
 
-//定義信號量
 sem_t sem_producer;
 sem_t sem_consumer;
 
-//生產者線程
 void *producer(void *arg)
 {
 
     NODE *pNode = NULL;
     while (1)
     {
-        //生產一個節點
         pNode = (NODE *)malloc(sizeof(NODE));
         if (pNode == NULL)
         {
@@ -36,33 +32,28 @@ void *producer(void *arg)
         pNode->data = rand() % 1000;
         printf("P:[%d]\n", pNode->data);
 
-        //加鎖
-        sem_wait(&sem_producer);//相當於--
+        sem_wait(&sem_producer);
         
         pNode->next = head;
         head = pNode;
 
-        //解鎖
-        sem_post(&sem_consumer);//相當於++
+        sem_post(&sem_consumer);
 
         sleep(rand() % 3);
     }
 }
 
-//消費者線程
 void *consumer(void *arg)
 {
     NODE *pNode = NULL;
     while (1)
     {
-        //加鎖
-        sem_wait(&sem_consumer); //相當於--
+        sem_wait(&sem_consumer); 
 
         printf("C:[%d]\n", head->data);
         pNode = head;
         head = head->next;
 
-        //解鎖
         sem_post(&sem_producer);
 
         free(pNode);
@@ -77,11 +68,9 @@ int main()
     pthread_t thread1;
     pthread_t thread2;
 
-    //初始化信號量
     sem_init(&sem_producer, 0, 5);
     sem_init(&sem_consumer, 0, 0);
 
-    //創建生產者線程
     ret = pthread_create(&thread1, NULL, producer, NULL);
     if (ret != 0)
     {
@@ -89,7 +78,6 @@ int main()
         return -1;
     }
 
-    //創建消費者線程
     ret = pthread_create(&thread2, NULL, consumer, NULL);
     if (ret != 0)
     {
@@ -100,7 +88,6 @@ int main()
     pthread_join(thread1, NULL);
     pthread_join(thread2, NULL);
 
-    //釋放信號量資源
     sem_destroy(&sem_producer);
     sem_destroy(&sem_consumer);
 
