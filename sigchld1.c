@@ -1,4 +1,3 @@
-//父進程使用SIGCHLD信號完成對子進程的回收
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
@@ -39,7 +38,6 @@ int main(int argc, char *argv[])
 		else if (pid > 0)
 		{
 			printf("father: pid==[%d], fpid==[%d]\n", getpid(), getppid());
-			//sleep(1);//也可放到下面一起
 		}
 		else if (pid == 0)
 		{
@@ -48,25 +46,25 @@ int main(int argc, char *argv[])
 		}
 	}
 
-	if (i == 0) //第一個子進程
+	if (i == 0) 
 	{
 		printf("[%d]---[%d]: child\n", i, getpid());
 		sleep(1);
 	}
 
-	if (i == 1) //第二個子進程
+	if (i == 1) 
 	{
 		printf("[%d]---[%d]: child\n", i, getpid());
 		sleep(2);
 	}
 
-	if (i == 2) //第三個子進程
+	if (i == 2) 
 	{
 		printf("[%d]---[%d]: child\n", i, getpid());
 		sleep(3);
 	}
 
-	if (i == 3) //父進程
+	if (i == 3) 
 	{
 		printf("[%d]---[%d]: parent\n", i, getpid());
 		struct sigaction act;
