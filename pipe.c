@@ -7,7 +7,6 @@
 
 int main()
 {
-    //創建管道int pipe(int pipefd[2]);
     int fd[2];
     int ret = pipe(fd);
     if(ret<0)
@@ -16,7 +15,6 @@ int main()
         return -1;
     }
 
-    //創建子進程
     pid_t pid = fork();
     if(pid<0)
     {
@@ -25,7 +23,6 @@ int main()
     }
     else if(pid>0)
     {
-        //關閉讀端(0讀1寫)
         close(fd[0]);
         write(fd[1], "hello world", strlen("hello world"));
 
@@ -33,7 +30,6 @@ int main()
     }
     else
     {
-        //關閉寫端
         close(fd[1]);
         char buf[64];
         memset(buf, 0x00, sizeof(buf));
