@@ -1,4 +1,3 @@
-//取消線程函數
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
@@ -12,7 +11,6 @@ void *mythread(void *arg)
     {
         int a;
         int b;
-        //設置取消點
         pthread_testcancel();
     }
 }
@@ -28,11 +26,9 @@ int main()
     }
     printf("main thread, pid==[%d], id==[%ld]\n", getpid(), pthread_self());
 
-    //取消子線程(沒設置取消點沒做用)
     pthread_cancel(thread);
 
     pthread_join(thread, NULL);
-    //目的是為了回收前讓子線程執行起來
     sleep(1);
     return 0;
 }
