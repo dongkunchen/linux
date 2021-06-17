@@ -27,25 +27,24 @@ int main(int argc, char** argv)
 {
     if( argc < 3 )
     {
-        //兩個參數依次是服務器端口的IP地址、端口號
         printf("please input 2 parameter\n");
         return -1;
     }
  
-    //創建根節點
+    
     struct event_base *base = event_base_new();
  
-    //創建並且初始化buffer緩衝區
+    
     struct bufferevent* bev = bufferevent_socket_new(base, -1,
                                                      BEV_OPT_CLOSE_ON_FREE);
  
-    //監聽終端輸入事件 設置標準輸入的監控 設置回調是cmd_msg_cb
+    
     struct event* ev_cmd = event_new(base, STDIN_FILENO,
                                      EV_READ | EV_PERSIST,
                                      cmd_msg_cb, (void*)bev);
  
  
-    //上樹 開始監聽標準輸入的讀事件
+    
     event_add(ev_cmd, NULL);
  
     struct sockaddr_in server_addr;
@@ -87,7 +86,7 @@ void cmd_msg_cb(int fd, short events, void* arg)
  
     struct bufferevent* bev = (struct bufferevent*)arg;
  
-    //把终端的消息发送给服务器端
+    
     bufferevent_write(bev, msg, ret);
 }
  
@@ -116,7 +115,7 @@ void event_cb(struct bufferevent *bev, short event, void *arg)
         return ;
     }
  
-    //这将自动close套接字和free读写缓冲区
+    
     bufferevent_free(bev);
  
     struct event *ev = (struct event*)arg;
