@@ -16,15 +16,14 @@ int main()
 	else if(pid>0)
 	{
 		printf("father: [%d], pid==[%d], fpid==[%d]\n", pid, getpid(), getppid());
-		//pid_t wpid = wait(NULL);
 		int wstatus;
 		pid_t wpid = wait(&wstatus);
 		printf("wpid==[%d\n]", wpid);
-		if(WIFEXITED(wstatus))//正常退出
+		if(WIFEXITED(wstatus))
 		{
 			printf("chile normal exit, status==[%d]\n",  WEXITSTATUS(wstatus));
 		}
-		else if(WIFSIGNALED(wstatus))//被信號殺死
+		else if(WIFSIGNALED(wstatus))
 		{
 			printf("child killed by singnal, signo==[%d]\n",  WTERMSIG(wstatus));
 		}
