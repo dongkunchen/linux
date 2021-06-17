@@ -1,4 +1,3 @@
-//多線程版本高併發服務器
 #include <string.h>
 #include <sys/types.h>
 #include <unistd.h>
@@ -11,7 +10,7 @@
 
 typedef struct info
 {
-    int cfd; //-1表示可用,大於0表示已被占用
+    int cfd; 
     int idx;
     pthread_t thread;
     struct sockaddr_in client;
@@ -19,7 +18,6 @@ typedef struct info
 
 INFO thInfo[1024];
 
-//子線程回調函數
 void *thread_work(void *arg)
 {
     INFO *p = (INFO *)arg;
@@ -39,7 +37,6 @@ void *thread_work(void *arg)
     while (1)
     {
         memset(buf, 0x00, sizeof(buf));
-        //讀數據
         n = Read(cfd, buf, sizeof(buf));
         if (n <= 0)
         {
@@ -54,11 +51,9 @@ void *thread_work(void *arg)
         {
             buf[i] = toupper(buf[i]);
         }
-        //發送數據給客戶端
         Write(cfd, buf, n);
     }
 
-    //關閉通信文件描述符
     close(cfd);
 
     pthread_exit(NULL);
@@ -91,14 +86,11 @@ int findIndex()
 
 int main()
 {
-    //創建socket
     int lfd = Socket(AF_INET, SOCK_STREAM, 0);
 
-    //設置端口複用 不用等待一分鐘就能在連
     int opt = 1;
     setsockopt(lfd, SOL_SOCKET, SO_REUSEADDR, &opt, sizeof(int));
 
-    //綁定
     struct sockaddr_in serv;
     bzero(&serv, sizeof(serv));
     serv.sin_family = AF_INET;
@@ -106,10 +98,8 @@ int main()
     serv.sin_addr.s_addr = htonl(INADDR_ANY);
     Bind(lfd, (struct sockaddr *)&serv, sizeof(serv));
 
-    //設置監聽
     Listen(lfd, 128);
 
-    //初始化
     init_thInfo();
 
     int cfd;
@@ -122,10 +112,8 @@ int main()
     {
         len = sizeof(client);
         bzero(&client, sizeof(client));
-        //接受新的連接
         cfd = Accept(lfd, (struct sockaddr *)&client, &len);
 
-        //找數組中空閒的位置
         idx = findIndex();
         if(idx==-1)
         {
@@ -133,12 +121,10 @@ int main()
             continue;
         }
 
-        //對空閒位置的元素成員賦值
         thInfo[idx].cfd = cfd;
         thInfo[idx].idx = idx;
         memcpy(&thInfo[idx].client, &client, sizeof(client));
 
-        //創建子線程
         ret = pthread_create(&thInfo[idx].thread, NULL, thread_work, &thInfo[idx].cfd);
         if(ret!=0)
         {
@@ -146,11 +132,9 @@ int main()
             exit(-1);
         }
 
-        //設置子線成為分離屬性
         pthread_detach(thInfo[idx].thread);
     }
 
-    //關閉監聽文件描述符
     close(lfd);
 
     return 0;
