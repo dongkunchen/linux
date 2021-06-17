@@ -1,4 +1,3 @@
-//多路IO復用-select
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
@@ -24,14 +23,11 @@ int main()
     int connfd[FD_SETSIZE];
     fd_set tmpfds, readfds;
     struct sockaddr_in cliaddr;
-    //創建socket
     int lfd = Socket(AF_INET, SOCK_STREAM, 0);
 
-    //設置端口複用 不用等待一分鐘就能在連
     int opt = 1;
     setsockopt(lfd, SOL_SOCKET, SO_REUSEADDR, &opt, sizeof(int));
 
-    //綁定
     struct sockaddr_in serv;
     bzero(&serv, sizeof(serv));
     serv.sin_family = AF_INET;
@@ -39,14 +35,11 @@ int main()
     serv.sin_addr.s_addr = htonl(INADDR_ANY);
     Bind(lfd, (struct sockaddr *)&serv, sizeof(serv));
 
-    //設置監聽
     Listen(lfd, 128);
 
-    //清空readfds和tempfds集合
     FD_ZERO(&readfds);
     FD_ZERO(&tmpfds);
 
-    //將lfd加入readfds中,委託內和監控
     FD_SET(lfd, &readfds);
 
     for (i = 0; i < FD_SETSIZE; i++)
@@ -68,7 +61,7 @@ int main()
                 cfd = Accept(lfd, (struct sockaddr *)&cliaddr, &len);
                 if (cfd < 0)
                 {
-                    if (errno == ECONNABORTED || errno == EINTR) //被信號中斷
+                    if (errno == ECONNABORTED || errno == EINTR) 
                     {
                         continue;
                     }
@@ -86,7 +79,6 @@ int main()
                 {
                     close(cfd);
                     printf("too many clients, i==[%d]\n", i);
-                    //exit(1);
                     continue;
                 }
                 if (i > maxi)
@@ -107,11 +99,9 @@ int main()
                 }
             }
 
-            //有數據發來的情況
             for (i = 0; i <= maxi; i++)
             {
                 int sockfd = connfd[i];
-                //判斷sockfd文件描述符是否有變化
                 if (sockfd == -1)
                 {
                     continue;
@@ -119,7 +109,6 @@ int main()
 
                 if (FD_ISSET(sockfd, &tmpfds))
                 {
-                    //讀數據
                     memset(buf, 0x00, sizeof(buf));
                     n = Read(sockfd, buf, sizeof(buf));
                     if (n < 0)
@@ -132,9 +121,7 @@ int main()
                     else if (n == 0)
                     {
                         perror("client is closed\n");
-                        //關閉連接
                         close(sockfd);
-                        //將sockfd從readfds中刪除
                         FD_CLR(sockfd, &readfds);
                         connfd[i] = -1;
                     }
